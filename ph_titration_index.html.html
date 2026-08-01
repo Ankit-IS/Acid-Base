@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Titration Bench — Acids, Bases &amp; pH | MYP Grade 9 Sciences</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#e9eef1;
+  --panel:#ffffff;
+  --panel-2:#f3f6f7;
+  --border:#c6d3d9;
+  --ink:#101c26;
+  --ink-soft:#4d616d;
+  --ink-faint:#8298a3;
+  --teal:#0e7c86;
+  --teal-dark:#0a5a62;
+  --teal-pale:#dcedee;
+  --amber:#c77d2e;
+  --green:#16a34a;
+  --amber-m:#d97706;
+  --red:#dc2626;
+  --mono:'IBM Plex Mono',monospace;
+  --display:'Space Grotesk',sans-serif;
+  --radius:3px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--mono);}
+body{min-height:100vh;}
+h1,h2,h3,.disp{font-family:var(--display);letter-spacing:-0.01em;}
+button{font-family:var(--mono);cursor:pointer;}
+::selection{background:var(--teal);color:#fff;}
+
+/* ===== SPLASH ===== */
+#splash{
+  position:fixed;inset:0;z-index:100;
+  background:
+    linear-gradient(180deg,#0d2229 0%,#0a1a20 60%,#081419 100%);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  color:#eaf3f2;text-align:center;padding:24px;
+}
+#splash .eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#7fd1c6;margin-bottom:14px;}
+#splash h1{font-size:clamp(28px,5vw,52px);margin:0 0 10px;color:#f5faf9;}
+#splash p.sub{color:#a9c2be;max-width:560px;margin:0 auto 28px;font-size:14px;line-height:1.6;}
+#splash .badges{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:34px;}
+#splash .badge{border:1px solid #2c5a56;color:#bfe3dc;padding:6px 12px;border-radius:20px;font-size:11px;letter-spacing:.06em;}
+#startBtn{
+  background:#e8fff9;color:#0a2b28;border:none;padding:16px 40px;font-size:15px;font-weight:700;
+  border-radius:2px;font-family:var(--display);letter-spacing:.02em;
+  box-shadow:0 0 0 0 rgba(232,255,249,.5);animation:pulseGlow 2.2s infinite;
+}
+@keyframes pulseGlow{
+  0%{box-shadow:0 0 0 0 rgba(232,255,249,.45);}
+  70%{box-shadow:0 0 0 16px rgba(232,255,249,0);}
+  100%{box-shadow:0 0 0 0 rgba(232,255,249,0);}
+}
+#splash .drip{position:absolute;width:6px;height:6px;border-radius:50%;background:#7fd1c6;opacity:.7;animation:splashDrip 3s infinite linear;}
+
+@keyframes splashDrip{
+  0%{transform:translateY(-40px);opacity:0;}
+  15%{opacity:.8;}
+  100%{transform:translateY(60vh);opacity:0;}
+}
+
+/* ===== APP SHELL ===== */
+#app{display:none;max-width:1400px;margin:0 auto;padding:14px 16px 60px;}
+header.topbar{margin-bottom:12px;}
+.masthead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:10px;}
+.masthead h1{font-size:22px;margin:0;}
+.masthead .meta{font-size:11px;color:var(--ink-soft);letter-spacing:.04em;}
+#resetBtn{background:var(--panel);border:1px solid var(--border);padding:8px 14px;font-size:11px;color:var(--ink-soft);border-radius:var(--radius);}
+#resetBtn:hover{border-color:var(--ink);color:var(--ink);}
+
+.objectives{background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--teal);padding:10px 14px;font-size:12px;margin-bottom:12px;border-radius:var(--radius);}
+.objectives b{font-family:var(--display);}
+.objectives ol{margin:6px 0 0;padding-left:18px;}
+.objectives li{margin-bottom:2px;color:var(--ink-soft);}
+
+/* phase timeline as calibrated ruler */
+.timeline{display:flex;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px;}
+.tstep{flex:1;padding:10px 8px;text-align:center;font-size:11px;border-right:1px solid var(--border);position:relative;color:var(--ink-faint);}
+.tstep:last-child{border-right:none;}
+.tstep .n{display:block;font-family:var(--display);font-size:15px;margin-bottom:2px;}
+.tstep.done{background:var(--teal-pale);color:var(--teal-dark);}
+.tstep.active{background:var(--ink);color:#fff;}
+.tstep.active .n{color:#7fd1c6;}
+
+/* ATL corner panel */
+#atl{position:fixed;right:10px;bottom:10px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;font-size:10.5px;z-index:40;box-shadow:0 2px 10px rgba(0,0,0,.08);width:168px;}
+#atl h4{margin:0 0 6px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);}
+.atl-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.dots span{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--border);margin-left:2px;}
+.dots span.on{background:var(--teal);}
+
+.layout{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;}
+@media (max-width:980px){.layout{grid-template-columns:1fr;}}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px;}
+.panel h3{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);margin:0 0 10px;}
+
+/* SVG scene */
+#sceneWrap{position:relative;background:linear-gradient(180deg,#f7fafb,#eef3f4);border:1px solid var(--border);border-radius:var(--radius);padding:8px;}
+#sceneSvg{width:100%;height:auto;display:block;}
+.round-badge{position:absolute;top:14px;left:14px;font-size:10px;background:var(--ink);color:#fff;padding:3px 8px;border-radius:2px;letter-spacing:.06em;}
+
+/* sliders */
+.slider-item{margin-bottom:16px;}
+.slider-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;}
+.slider-label{font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;}
+.tip{width:14px;height:14px;border-radius:50%;background:var(--panel-2);border:1px solid var(--border);color:var(--ink-soft);font-size:9px;display:inline-flex;align-items:center;justify-content:center;position:relative;cursor:help;}
+.tip:hover .tipbox{display:block;}
+.tipbox{display:none;position:absolute;bottom:20px;left:0;width:230px;background:var(--ink);color:#eaf3f2;font-size:10.5px;padding:8px 10px;border-radius:3px;line-height:1.5;z-index:20;}
+input[type=range]{width:100%;accent-color:var(--teal);}
+.slider-desc{font-size:10.5px;color:var(--ink-soft);margin-top:3px;min-height:14px;}
+.slider-ends{display:flex;justify-content:space-between;font-size:9px;color:var(--ink-faint);margin-top:1px;}
+
+/* CoT box */
+.cot-step{border:1px solid var(--border);border-left:3px solid var(--teal-dark);border-radius:var(--radius);padding:10px;margin-bottom:8px;background:var(--panel-2);}
+.cot-step label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);display:block;margin-bottom:5px;}
+.cot-row{display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;}
+select,textarea{font-family:var(--mono);font-size:12px;border:1px solid var(--border);border-radius:2px;padding:6px;background:#fff;color:var(--ink);}
+textarea{width:100%;resize:vertical;min-height:38px;}
+select{flex:1;min-width:140px;}
+
+.predict-widget{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:4px;}
+.predict-btn{border:1px solid var(--border);background:#fff;border-radius:var(--radius);padding:8px 4px;font-size:10px;text-align:center;line-height:1.4;}
+.predict-btn .em{font-size:18px;display:block;}
+.predict-btn.sel{border-color:var(--teal);background:var(--teal-pale);box-shadow:inset 0 0 0 1px var(--teal);}
+
+#advanceBtn{width:100%;margin-top:6px;padding:12px;background:var(--ink);color:#fff;border:none;border-radius:var(--radius);font-size:12px;letter-spacing:.05em;text-transform:uppercase;font-weight:600;}
+#advanceBtn:disabled{background:#c9d2d6;color:#8298a3;cursor:not-allowed;}
+#advanceBtn:not(:disabled):hover{background:var(--teal-dark);}
+
+/* bars */
+.bar-item{margin-bottom:12px;}
+.bar-top{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;}
+.bar-top .warn-ic{color:var(--red);animation:blink 1s infinite;margin-left:4px;display:none;}
+.bar-top .warn-ic.show{display:inline;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.15;}}
+.bar-track{height:9px;background:var(--panel-2);border:1px solid var(--border);border-radius:5px;overflow:hidden;}
+.bar-fill{height:100%;transition:width .5s ease,background .5s ease;}
+
+/* advisors */
+.advisor-row{display:flex;gap:10px;}
+.advisor{position:relative;text-align:center;font-size:9.5px;color:var(--ink-soft);width:72px;}
+.advisor svg{width:44px;height:44px;}
+.advisor:hover .atip{display:block;}
+.atip{display:none;position:absolute;bottom:56px;left:50%;transform:translateX(-50%);width:170px;background:var(--ink);color:#eaf3f2;font-size:10px;padding:8px;border-radius:3px;line-height:1.5;z-index:30;}
+
+/* echo */
+.echo{background:var(--panel-2);border:1px dashed var(--teal-dark);border-radius:var(--radius);padding:10px 12px;font-size:11.5px;line-height:1.55;margin-top:4px;}
+.echo b{color:var(--teal-dark);font-family:var(--display);}
+
+/* chart */
+canvas#chart{width:100%;height:180px;}
+
+/* modals */
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(8,16,20,.66);z-index:80;align-items:center;justify-content:center;padding:16px;}
+.modal-backdrop.show{display:flex;}
+.modal{background:#fff;border-radius:4px;max-width:640px;width:100%;max-height:88vh;overflow-y:auto;padding:20px 22px;}
+.modal h2{font-size:16px;margin:0 0 4px;}
+.modal .sub{font-size:11px;color:var(--ink-soft);margin-bottom:14px;}
+.future-card{border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.5;}
+.future-card b{font-family:var(--display);}
+.rank-row{display:flex;align-items:center;gap:8px;margin-top:4px;}
+.rank-row select{width:70px;flex:none;}
+.modalBtn{margin-top:10px;width:100%;padding:12px;background:var(--teal);color:#fff;border:none;border-radius:var(--radius);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em;}
+.modalBtn:disabled{background:#c9d2d6;color:#8298a3;}
+
+.outcome-grid{display:grid;grid-template-columns:1fr;gap:5px;margin-bottom:12px;}
+.orow{display:flex;justify-content:space-between;font-size:11.5px;border-bottom:1px solid var(--panel-2);padding:4px 0;}
+.arrow-up{color:var(--green);}
+.arrow-down{color:var(--red);}
+.arrow-flat{color:var(--ink-faint);}
+.box{border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;margin-bottom:10px;font-size:12px;line-height:1.55;}
+.box h4{margin:0 0 5px;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);}
+.rtf-chain span{display:block;}
+.rtf-chain .arrow{color:var(--teal-dark);font-weight:700;margin:0 4px;}
+.event-card{border:1px solid var(--amber);background:#fff8ee;border-radius:var(--radius);padding:10px 12px;margin-bottom:10px;font-size:12px;}
+.event-card b{color:var(--amber);}
+
+/* reflection */
+#reflection{display:none;}
+.rq{margin-bottom:14px;}
+.rq label{font-size:12px;font-weight:600;display:block;margin-bottom:5px;}
+.rq textarea{width:100%;min-height:56px;}
+
+/* toasts */
+#toasts{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:6px;align-items:center;}
+.toast{background:var(--ink);color:#eaf3f2;font-size:11.5px;padding:9px 16px;border-radius:20px;box-shadow:0 3px 12px rgba(0,0,0,.2);animation:toastIn .25s ease;}
+@keyframes toastIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+
+<!-- ================= SPLASH ================= -->
+<div id="splash">
+  <div class="drip" style="left:20%;animation-delay:0s;"></div>
+  <div class="drip" style="left:52%;animation-delay:1s;"></div>
+  <div class="drip" style="left:78%;animation-delay:2s;"></div>
+  <div class="eyebrow">IB MYP Sciences — Grade 9</div>
+  <h1>Titration Bench</h1>
+  <p class="sub">Acids, bases and pH — the pH scale, indicators and neutralisation reactions. Run five rounds at the burette, predict before you observe, and connect every result back to the key concept of <b>Form</b>.</p>
+  <div class="badges">
+    <span class="badge">Key Concept: Form</span>
+    <span class="badge">Related: Function · Causality · Change</span>
+    <span class="badge">ATL: Thinking, Research</span>
+  </div>
+  <button id="startBtn" onclick="startSim()">Start the Simulation</button>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="app">
+  <header class="topbar">
+    <div class="masthead">
+      <h1>Titration Bench</h1>
+      <div>
+        <button id="resetBtn" onclick="confirmReset()">↺ Reset simulation</button>
+        <div class="meta">MYP Grade 9 · Chemistry</div>
+      </div>
+    </div>
+    <div class="objectives">
+      <b>By the end of this simulation, students will be able to:</b>
+      <ol>
+        <li>Adjust acid strength, alkali volume, indicator type and temperature and observe their effect on pH in real time.</li>
+        <li>Make and test predictions about a titration outcome before each round reveals its result.</li>
+        <li>Connect neutralisation outcomes to real-world acid–base chemistry and the IB key concept of Form.</li>
+      </ol>
+    </div>
+    <div class="timeline" id="timeline"></div>
+  </header>
+
+  <div id="roundView" class="layout">
+    <div class="col-left">
+      <div class="panel" id="scenePanel">
+        <h3>Lab Bench — Live View</h3>
+        <div id="sceneWrap">
+          <div class="round-badge" id="roundBadge">ROUND 1 / 5</div>
+          <svg id="sceneSvg" viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Bench Controls</h3>
+        <div id="sliders"></div>
+      </div>
+    </div>
+
+    <div class="col-right">
+      <div class="panel">
+        <h3>Tracked Metrics</h3>
+        <div id="bars"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Lab Advisors</h3>
+        <div class="advisor-row" id="advisors"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Real-world Echo — Round <span id="echoRoundNum">1</span></h3>
+        <div class="echo" id="echoBox"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:0;">
+    <h3>Chain of Thought — Reasoning Before You Advance</h3>
+    <div class="cot-step">
+      <label>Step 1 — I am setting a variable to a value because…</label>
+      <div class="cot-row">
+        <select id="cotVar" onchange="onCotChange()">
+          <option value="">Choose a variable…</option>
+          <option value="acid">Acid strength</option>
+          <option value="alkali">Alkali drops</option>
+          <option value="indicator">Indicator type</option>
+          <option value="temp">Temperature</option>
+        </select>
+      </div>
+      <textarea id="cotVarReason" placeholder="I am setting this variable to its current value because…" oninput="onCotChange()"></textarea>
+    </div>
+    <div class="cot-step">
+      <label>Step 2 — I predict this will affect a resource because…</label>
+      <div class="cot-row">
+        <select id="cotRes1" onchange="onCotChange()">
+          <option value="">Choose a resource…</option>
+          <option value="ph">pH value</option>
+          <option value="completeness">Neutralisation completeness</option>
+          <option value="indicatorAcc">Indicator colour accuracy</option>
+          <option value="saltFormed">Salt formed</option>
+          <option value="volEquiv">Volume at equivalence point</option>
+        </select>
+      </div>
+      <textarea id="cotRes1Reason" placeholder="I predict this will affect the resource because…" oninput="onCotChange()"></textarea>
+    </div>
+    <div class="cot-step">
+      <label>Step 3 — The knock-on effect on a secondary resource will be… because…</label>
+      <div class="cot-row">
+        <select id="cotRes2" onchange="onCotChange()">
+          <option value="">Choose a resource…</option>
+          <option value="ph">pH value</option>
+          <option value="completeness">Neutralisation completeness</option>
+          <option value="indicatorAcc">Indicator colour accuracy</option>
+          <option value="saltFormed">Salt formed</option>
+          <option value="volEquiv">Volume at equivalence point</option>
+        </select>
+      </div>
+      <textarea id="cotRes2Reason" placeholder="The knock-on effect will be… because…" oninput="onCotChange()"></textarea>
+    </div>
+    <div class="cot-step">
+      <label>Step 4 — Therefore, I predict the overall outcome will be:</label>
+      <div class="predict-widget" id="predictWidget"></div>
+    </div>
+    <button id="advanceBtn" disabled onclick="onAdvance()">Advance round — locked</button>
+  </div>
+
+  <div class="panel">
+    <h3>Metric Trends Across Rounds</h3>
+    <canvas id="chart" width="1100" height="180"></canvas>
+  </div>
+
+  <div class="panel" id="reflection">
+    <h3>Final IB Reflection</h3>
+    <div id="reflectionQs"></div>
+  </div>
+</div>
+
+<!-- ================= ATL PANEL ================= -->
+<div id="atl">
+  <h4>ATL Skills Tracker</h4>
+  <div class="atl-row"><span>Thinking</span><span class="dots" id="dotsThinking"></span></div>
+  <div class="atl-row"><span>Research</span><span class="dots" id="dotsResearch"></span></div>
+</div>
+
+<!-- ================= TOT MODAL ================= -->
+<div class="modal-backdrop" id="totBackdrop">
+  <div class="modal">
+    <h2>Three Futures</h2>
+    <div class="sub">Before the result is revealed — rank these three futures by likelihood and justify your #1 choice.</div>
+    <div id="futuresList"></div>
+    <label style="font-size:11px;font-weight:600;">Why did you rank your #1 choice highest?</label>
+    <textarea id="totJustify" oninput="validateTot()" placeholder="I ranked this future first because…"></textarea>
+    <button class="modalBtn" id="revealBtn" disabled onclick="revealResult()">Reveal actual outcome</button>
+  </div>
+</div>
+
+<!-- ================= RESULTS MODAL ================= -->
+<div class="modal-backdrop" id="resultsBackdrop">
+  <div class="modal" id="resultsModalBody"></div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+/* ============================================================
+   STATE
+   ============================================================ */
+const TOTAL_ROUNDS = 5;
+const state = {
+  round: 1,
+  sliders: { acid: 2, alkali: 0, indicator: 0, temp: 2 },
+  cot: { varKey:'', varReason:'', res1:'', res1Reason:'', res2:'', res2Reason:'', predict:'' },
+  tot: { ranks:{A:'',B:'',C:''}, justify:'' },
+  history: [],           // committed metrics per round
+  atl: { thinking:0, research:0 },
+  pendingActualMetrics: null,
+  pendingCategory: null,
+  pendingEvent: null
+};
+
+const SLIDER_DEFS = [
+  { id:'acid', label:'Acid Strength Added', tooltip:'Models concentration and reactivity — from Chemical Reactions (Grade 8).',
+    lo:'Weak acid — dilute vinegar, pH 4', hi:'Strong acid — HCl 10M, pH 0' },
+  { id:'alkali', label:'Alkali Drops Added', tooltip:'Models stoichiometry and reacting quantities — from Particulate Nature of Matter (Grade 8).',
+    lo:'None added', hi:'Excess alkali — past equivalence point' },
+  { id:'indicator', label:'Indicator Type', tooltip:'Models qualitative vs quantitative measurement — from Scientific Inquiry Skills (Grade 8).',
+    lo:'Universal indicator — full colour range', hi:'Phenolphthalein — sharp pink endpoint only' },
+  { id:'temp', label:'Temperature of Solution', tooltip:'Models kinetic theory and reaction rate — from States of Matter &amp; Energy (Grade 8).',
+    lo:'0°C — iced', hi:'80°C — near boiling' }
+];
+
+const PREDICTIONS = [
+  { id:'thriving', emoji:'🌱', label:'Clean Neutralisation', desc:'Sharp, accurate, complete reaction' },
+  { id:'stable',   emoji:'⚖️', label:'Stable Solution',      desc:'Mild imbalance, still usable' },
+  { id:'stressed', emoji:'⚠️', label:'Indicator Stressed',   desc:'Unreliable colour reading' },
+  { id:'crisis',   emoji:'🔴', label:'Reaction Crisis',      desc:'Extreme pH, corrosive, dangerous' }
+];
+
+const BARS = [
+  { key:'ph', label:'pH Value', getPercent:m=>100-Math.abs(m.ph-7)/7*100, getText:m=>m.ph.toFixed(1)+' pH' },
+  { key:'completeness', label:'Neutralisation Completeness', getPercent:m=>m.completeness, getText:m=>Math.round(m.completeness)+'%' },
+  { key:'indicatorAcc', label:'Indicator Colour Accuracy', getPercent:m=>m.indicatorAcc, getText:m=>Math.round(m.indicatorAcc)+'%' },
+  { key:'saltFormed', label:'Salt Formed (NaCl)', getPercent:m=>m.saltFormed, getText:m=>Math.round(m.saltFormed)+'%' },
+  { key:'volEquiv', label:'Volume at Equivalence Point', getPercent:m=>m.volEquiv, getText:m=>Math.round(m.volEquiv)+'%' }
+];
+const RESOURCE_NAMES = {ph:'pH value', completeness:'neutralisation completeness', indicatorAcc:'indicator colour accuracy', saltFormed:'salt formed', volEquiv:'volume at equivalence point'};
+
+const ADVISORS = [
+  { name:'Dr Reyes', role:'Analytical Chemist', tip:'Watch how sharply the colour changes right at the endpoint — that sharpness is Form controlling Function.' },
+  { name:'Kavi', role:'Lab Technician', tip:'Precision matters: overshooting the alkali wastes reagent and hides the true equivalence point.' },
+  { name:'Prof Munroe', role:'Environmental Scientist', tip:'Every titration curve you draw here has a twin in a real ecosystem — oceans, blood, soil.' }
+];
+
+const REALWORLD = [
+  { title:'Ocean Acidification', text:'Ocean surface pH has fallen from about 8.2 to 8.1 since industrialisation — a change that sounds tiny but represents roughly a 26% increase in acidity, because pH is logarithmic.' },
+  { title:'Blood pH Homeostasis', text:'Human blood is tightly buffered between pH 7.35 and 7.45. A shift of just 0.2 units outside that range, in either direction, can be fatal.' },
+  { title:'Antacids', text:'Antacid tablets contain bases such as calcium carbonate that neutralise excess stomach acid, relieving heartburn through the same reaction chemistry as this bench.' },
+  { title:'Acid Rain', text:'Acid rain can fall at around pH 4.2. Over decades it dissolves marble statues and lowers the pH of lakes enough to harm fish and amphibian populations.' },
+  { title:'Household pH Scale', text:'Coffee sits near pH 5, human blood near pH 7.4, and bleach near pH 12 — the same continuous scale your flask is moving along right now.' }
+];
+
+const EVENTS = {
+  2: { title:'Exothermic Surge', body:'The neutralisation releases heat as it proceeds. Effective temperature rises for this round — rounds with temperature already pushed to an extreme are hit hardest.', apply:(s,m)=>{ const dev=Math.abs(s.temp-2); if(dev>=2){ m.indicatorAcc=Math.max(0,m.indicatorAcc-12);} return m; } },
+  3: { title:'Contaminated Glassware', body:'Residue in the flask distorts the colour reading. Sharp, narrow-range indicators relying only on the endpoint lose the most accuracy.', apply:(s,m)=>{ const penalty = 8 + s.indicator*3; m.indicatorAcc=Math.max(0,m.indicatorAcc-penalty); return m; } },
+  4: { title:'pH Meter Drift', body:'A power fluctuation adds noise to the digital pH reading. Doses pushed far past equivalence produce the largest swing.', apply:(s,m)=>{ const dev=Math.abs(s.alkali-2); const noise = dev>=2 ? 0.9 : 0.3; m.ph=Math.max(0,Math.min(14,m.ph+(Math.random()<0.5?-noise:noise))); return m; } }
+};
+
+/* ============================================================
+   CHEMISTRY MODEL
+   ============================================================ */
+function computeMetrics(s){
+  const {acid, alkali, indicator, temp} = s;
+  const k = 0.6 + acid*0.5;
+  let ph = 7 + 7*Math.tanh(k*(alkali-2)/2);
+  ph -= (temp-2)*0.15;
+  ph = Math.max(0, Math.min(14, ph));
+
+  const dist = Math.abs(alkali-2);
+  const completeness = Math.max(0, 100 - dist*45);
+
+  const universalAcc = 94 - Math.abs(temp-2)*6;
+  const phenolAcc = ph>8.2 ? 90 : 18;
+  const t = indicator/4;
+  let indicatorAcc = Math.max(0, Math.min(100, universalAcc*(1-t) + phenolAcc*t));
+
+  const saltFormed = Math.max(0, Math.min(100, (alkali/2)*100));
+  const volEquiv = Math.max(0, 100 - dist*25);
+
+  return { ph, completeness, indicatorAcc, saltFormed, volEquiv };
+}
+
+function classify(m){
+  if(m.completeness>85 && m.indicatorAcc>70) return 'thriving';
+  if(m.indicatorAcc<45) return 'stressed';
+  if(m.ph>=5 && m.ph<=9) return 'stable';
+  return 'crisis';
+}
+
+function phColor(ph){
+  const stops=[
+    {p:0,c:[183,28,28]},{p:3,c:[220,38,38]},{p:5,c:[249,115,22]},
+    {p:6,c:[250,204,21]},{p:7,c:[74,222,128]},{p:8,c:[20,150,140]},
+    {p:10,c:[59,130,246]},{p:12,c:[99,102,241]},{p:14,c:[124,58,237]}
+  ];
+  for(let i=0;i<stops.length-1;i++){
+    const a=stops[i], b=stops[i+1];
+    if(ph>=a.p && ph<=b.p){
+      const f=(ph-a.p)/(b.p-a.p);
+      return a.c.map((v,idx)=>Math.round(v+(b.c[idx]-v)*f));
+    }
+  }
+  return stops[stops.length-1].c;
+}
+function mix(c1,c2,t){ return c1.map((v,i)=>Math.round(v+(c2[i]-v)*t)); }
+function rgb(c){ return `rgb(${c[0]},${c[1]},${c[2]})`; }
+
+/* ============================================================
+   RENDER: SLIDERS
+   ============================================================ */
+function sliderDescriptor(id,val){
+  const d = {
+    acid:['Very weak — like dilute vinegar, initial pH ≈ 4','Weak acid, initial pH ≈ 3','Moderate acid, initial pH ≈ 2','Strong acid, initial pH ≈ 1','Strong acid — 10M HCl, initial pH ≈ 0'],
+    alkali:['No alkali added yet','A little alkali — still far from equivalence','Around the equivalence point (pH ≈ 7)','Slightly past equivalence — mild excess','Excess alkali — well past equivalence'],
+    indicator:['Universal indicator — reads the full 0–14 range','Universal indicator, slightly desaturated','Mixed-range indicator','Narrow-range indicator','Phenolphthalein — colourless until pH 8.2, then sharp pink'],
+    temp:['0°C — iced solution, slow kinetics','Cool, ≈20°C','Room temperature, ≈40°C','Warm, ≈60°C','80°C — near boiling, fast kinetics, Kw shifts']
+  };
+  return d[id][val];
+}
+function renderSliders(){
+  const wrap = document.getElementById('sliders');
+  wrap.innerHTML = '';
+  SLIDER_DEFS.forEach(def=>{
+    const val = state.sliders[def.id];
+    const item = document.createElement('div');
+    item.className = 'slider-item';
+    item.innerHTML = `
+      <div class="slider-top">
+        <span class="slider-label">${def.label}
+          <span class="tip">i<span class="tipbox">${def.tooltip}</span></span>
+        </span>
+        <span style="font-size:11px;color:var(--ink-soft);">${val}/4</span>
+      </div>
+      <input type="range" min="0" max="4" step="1" value="${val}" id="slider_${def.id}">
+      <div class="slider-ends"><span>${def.lo}</span><span>${def.hi}</span></div>
+      <div class="slider-desc" id="desc_${def.id}">${sliderDescriptor(def.id,val)}</div>
+    `;
+    wrap.appendChild(item);
+  });
+  SLIDER_DEFS.forEach(def=>{
+    document.getElementById('slider_'+def.id).addEventListener('input',(e)=>{
+      state.sliders[def.id] = parseInt(e.target.value,10);
+      document.getElementById('desc_'+def.id).textContent = sliderDescriptor(def.id,state.sliders[def.id]);
+      const top = e.target.closest('.slider-item').querySelector('.slider-top span:last-child');
+      top.textContent = state.sliders[def.id]+'/4';
+      livePreview();
+    });
+  });
+}
+
+/* ============================================================
+   RENDER: SCENE (SVG)
+   ============================================================ */
+function buildSceneSkeleton(){
+  const svg = document.getElementById('sceneSvg');
+  svg.innerHTML = `
+    <rect x="0" y="0" width="640" height="400" fill="none"/>
+    <!-- burette stand -->
+    <rect x="60" y="20" width="6" height="230" fill="#8b98a1"/>
+    <rect x="30" y="240" width="66" height="8" fill="#8b98a1"/>
+    <!-- burette -->
+    <rect x="270" y="16" width="16" height="150" fill="#eaf3f4" stroke="#9fb3ba" stroke-width="1"/>
+    <polygon points="270,166 286,166 278,190" fill="#eaf3f4" stroke="#9fb3ba" stroke-width="1"/>
+    <text x="292" y="30" font-family="IBM Plex Mono" font-size="9" fill="#4d616d">NaOH</text>
+    <g id="dripGroup"></g>
+    <!-- flask -->
+    <g id="flaskGroup" transform="translate(278,190)">
+      <path d="M -6 0 L -6 40 L -46 130 Q -46 150 -26 150 L 26 150 Q 46 150 46 130 L 6 40 L 6 0 Z" fill="none" stroke="#5c6b74" stroke-width="2"/>
+      <clipPath id="flaskClip">
+        <path d="M -6 0 L -6 40 L -46 130 Q -46 150 -26 150 L 26 150 Q 46 150 46 130 L 6 40 L 6 0 Z"/>
+      </clipPath>
+      <rect id="liquid" x="-46" y="70" width="92" height="80" fill="rgb(220,38,38)" clip-path="url(#flaskClip)"/>
+      <circle id="endpointFlash" cx="0" cy="100" r="4" fill="#fff" opacity="0"/>
+    </g>
+    <!-- pH meter -->
+    <g transform="translate(420,60)">
+      <rect x="0" y="0" width="110" height="60" rx="4" fill="#101c26"/>
+      <text x="10" y="18" font-family="IBM Plex Mono" font-size="9" fill="#7fd1c6">pH METER</text>
+      <text id="phDigits" x="10" y="44" font-family="IBM Plex Mono" font-size="22" fill="#e8fff9">7.0</text>
+    </g>
+    <!-- equation -->
+    <g transform="translate(200,360)">
+      <text font-family="IBM Plex Mono" font-size="13" fill="#4d616d">
+        <tspan id="eqReact" fill="#dc2626">HCl + NaOH</tspan>
+        <tspan> → </tspan>
+        <tspan id="eqProd" fill="#0e7c86" opacity="0.15">NaCl + H₂O</tspan>
+      </text>
+    </g>
+    <!-- household strip -->
+    <g transform="translate(420,150)">
+      <text font-family="IBM Plex Mono" font-size="9" fill="#4d616d">HOUSEHOLD pH SCALE</text>
+      <rect x="0" y="10" width="180" height="10" rx="5" fill="url(#scaleGrad)"/>
+      <line x1="64" y1="6" x2="64" y2="24" stroke="#101c26" stroke-width="1"/>
+      <text x="60" y="36" font-size="8" fill="#4d616d">Coffee 5</text>
+      <line x1="95" y1="6" x2="95" y2="24" stroke="#101c26" stroke-width="1"/>
+      <text x="86" y="48" font-size="8" fill="#4d616d">Blood 7.4</text>
+      <line x1="154" y1="6" x2="154" y2="24" stroke="#101c26" stroke-width="1"/>
+      <text x="140" y="36" font-size="8" fill="#4d616d">Bleach 12</text>
+      <polygon id="phMarker" points="0,-4 5,4 -5,4" fill="#101c26" transform="translate(0,6)"/>
+    </g>
+    <defs>
+      <linearGradient id="scaleGrad" x1="0" x2="1">
+        <stop offset="0%" stop-color="rgb(183,28,28)"/>
+        <stop offset="35%" stop-color="rgb(250,204,21)"/>
+        <stop offset="50%" stop-color="rgb(74,222,128)"/>
+        <stop offset="70%" stop-color="rgb(59,130,246)"/>
+        <stop offset="100%" stop-color="rgb(124,58,237)"/>
+      </linearGradient>
+    </defs>
+  `;
+}
+
+function renderScene(m,s){
+  const c1 = phColor(m.ph);
+  const t = s.indicator/4;
+  const phenolC = m.ph>8.2 ? [236,72,153] : [245,245,244];
+  const finalC = mix(c1, phenolC, t);
+  document.getElementById('liquid').setAttribute('fill', rgb(finalC));
+  const level = 60 + s.alkali*15; // fill height grows with alkali added
+  document.getElementById('liquid').setAttribute('y', 150-level);
+  document.getElementById('liquid').setAttribute('height', level);
+
+  document.getElementById('phDigits').textContent = m.ph.toFixed(1);
+
+  const prodOpacity = 0.15 + (m.completeness/100)*0.85;
+  document.getElementById('eqProd').setAttribute('opacity', prodOpacity.toFixed(2));
+  document.getElementById('eqReact').setAttribute('opacity', (1 - (m.completeness/100)*0.55).toFixed(2));
+
+  const flash = document.getElementById('endpointFlash');
+  if(m.ph>=6.6 && m.ph<=7.4){
+    flash.setAttribute('opacity','0.9');
+    flash.setAttribute('r','60');
+    flash.style.transition='r 1.1s ease, opacity 1.1s ease';
+  } else {
+    flash.setAttribute('opacity','0');
+    flash.setAttribute('r','4');
+  }
+
+  const markerX = (m.ph/14)*180;
+  document.getElementById('phMarker').setAttribute('transform',`translate(${markerX},6)`);
+
+  document.getElementById('roundBadge').textContent = `ROUND ${state.round} / ${TOTAL_ROUNDS}`;
+}
+
+function triggerDripBurst(){
+  const g = document.getElementById('dripGroup');
+  g.innerHTML = '';
+  for(let i=0;i<4;i++){
+    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx','278'); c.setAttribute('cy','168'); c.setAttribute('r','3');
+    c.setAttribute('fill','#0e7c86');
+    c.style.animation = `dripFall 0.9s ease-in ${i*0.18}s 1`;
+    g.appendChild(c);
+  }
+}
+const styleTag = document.createElement('style');
+styleTag.textContent = `@keyframes dripFall{0%{transform:translateY(0);opacity:1;}100%{transform:translateY(24px);opacity:0;}}`;
+document.head.appendChild(styleTag);
+
+/* ============================================================
+   RENDER: BARS
+   ============================================================ */
+function barColor(pct){
+  if(pct>60) return 'var(--green)';
+  if(pct>=30) return 'var(--amber-m)';
+  return 'var(--red)';
+}
+function renderBars(m){
+  const wrap = document.getElementById('bars');
+  wrap.innerHTML = '';
+  BARS.forEach(b=>{
+    const pct = Math.max(0,Math.min(100,b.getPercent(m)));
+    const item = document.createElement('div');
+    item.className='bar-item';
+    item.innerHTML = `
+      <div class="bar-top">
+        <span>${b.label} <span class="warn-ic ${pct<20?'show':''}">⚠</span></span>
+        <span>${b.getText(m)}</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${barColor(pct)};"></div></div>
+    `;
+    wrap.appendChild(item);
+  });
+}
+
+/* ============================================================
+   RENDER: ADVISORS
+   ============================================================ */
+function faceSvg(mood){
+  const mouth = mood==='happy' ? 'M14 26 Q20 32 26 26' : mood==='worried' ? 'M14 29 Q20 23 26 29' : 'M14 27 L26 27';
+  const color = mood==='happy' ? '#16a34a' : mood==='worried' ? '#dc2626' : '#0e7c86';
+  return `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#f3f6f7" stroke="${color}" stroke-width="2"/>
+    <circle cx="14" cy="17" r="1.6" fill="${color}"/><circle cx="26" cy="17" r="1.6" fill="${color}"/>
+    <path d="${mouth}" stroke="${color}" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`;
+}
+function renderAdvisors(m){
+  const avg = m ? (m.completeness + m.indicatorAcc)/2 : 50;
+  const mood = avg>60 ? 'happy' : avg<40 ? 'worried' : 'neutral';
+  const wrap = document.getElementById('advisors');
+  wrap.innerHTML = ADVISORS.map(a=>`
+    <div class="advisor">
+      ${faceSvg(mood)}
+      <div><b>${a.name}</b></div>
+      <div style="font-size:8.5px;">${a.role}</div>
+      <div class="atip">${a.tip}</div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   LIVE PREVIEW (before locking)
+   ============================================================ */
+function livePreview(){
+  const m = computeMetrics(state.sliders);
+  renderScene(m, state.sliders);
+  renderBars(m);
+  renderAdvisors(m);
+}
+
+/* ============================================================
+   COT VALIDATION
+   ============================================================ */
+function onCotChange(){
+  state.cot.varKey = document.getElementById('cotVar').value;
+  state.cot.varReason = document.getElementById('cotVarReason').value.trim();
+  state.cot.res1 = document.getElementById('cotRes1').value;
+  state.cot.res1Reason = document.getElementById('cotRes1Reason').value.trim();
+  state.cot.res2 = document.getElementById('cotRes2').value;
+  state.cot.res2Reason = document.getElementById('cotRes2Reason').value.trim();
+  validateAdvance();
+}
+function renderPredictWidget(){
+  const wrap = document.getElementById('predictWidget');
+  wrap.innerHTML = PREDICTIONS.map(p=>`
+    <button type="button" class="predict-btn ${state.cot.predict===p.id?'sel':''}" onclick="selectPredict('${p.id}')">
+      <span class="em">${p.emoji}</span>${p.label}
+    </button>
+  `).join('');
+}
+function selectPredict(id){
+  state.cot.predict = id;
+  renderPredictWidget();
+  validateAdvance();
+}
+function validateAdvance(){
+  const c = state.cot;
+  const ok = c.varKey && c.varReason.length>2 && c.res1 && c.res1Reason.length>2 && c.res2 && c.res2Reason.length>2 && c.predict;
+  const btn = document.getElementById('advanceBtn');
+  btn.disabled = !ok;
+  btn.textContent = ok ? `Advance Round ${state.round}` : 'Advance round — locked';
+}
+
+/* ============================================================
+   FUTURES (ToT)
+   ============================================================ */
+function generateFutures(s,m,cat){
+  const catLabel = PREDICTIONS.find(p=>p.id===cat).label;
+  const optimistic = 'Alkali is dosed exactly to the equivalence point, the indicator reads cleanly, and the reaction completes with a sharp, textbook endpoint flash.';
+  const pessimistic = 'The dose overshoots badly, the indicator can no longer distinguish the colour change, and the solution ends up dangerously far from pH 7.';
+  const realistic = `With acid strength ${s.acid}/4, alkali at ${s.alkali}/4 and indicator setting ${s.indicator}/4, the flask settles near pH ${m.ph.toFixed(1)}, completeness ${Math.round(m.completeness)}% — a result best described as "${catLabel}."`;
+  return {
+    A: `<b>Future A (optimistic):</b> ${optimistic}`,
+    B: `<b>Future B (realistic):</b> ${realistic}`,
+    C: `<b>Future C (pessimistic):</b> ${pessimistic}`
+  };
+}
+function openTotModal(){
+  const m = computeMetrics(state.sliders);
+  const cat = classify(m);
+  state.pendingActualMetrics = m;
+  state.pendingCategory = cat;
+  const futures = generateFutures(state.sliders,m,cat);
+  document.getElementById('futuresList').innerHTML = ['A','B','C'].map(k=>`
+    <div class="future-card">
+      ${futures[k]}
+      <div class="rank-row">
+        <span style="font-size:11px;">Likelihood rank:</span>
+        <select id="rank_${k}" onchange="validateTot()">
+          <option value="">–</option>
+          <option value="1">1 (most likely)</option>
+          <option value="2">2</option>
+          <option value="3">3 (least likely)</option>
+        </select>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('totJustify').value = '';
+  document.getElementById('revealBtn').disabled = true;
+  document.getElementById('totBackdrop').classList.add('show');
+}
+function validateTot(){
+  const rA = document.getElementById('rank_A').value;
+  const rB = document.getElementById('rank_B').value;
+  const rC = document.getElementById('rank_C').value;
+  const allPicked = rA && rB && rC;
+  const unique = new Set([rA,rB,rC]).size===3;
+  const justify = document.getElementById('totJustify').value.trim().length>4;
+  document.getElementById('revealBtn').disabled = !(allPicked && unique && justify);
+}
+
+/* ============================================================
+   ADVANCE / REVEAL / RESULTS
+   ============================================================ */
+function onAdvance(){
+  openTotModal();
+}
+
+function revealResult(){
+  document.getElementById('totBackdrop').classList.remove('show');
+  let m = { ...state.pendingActualMetrics };
+  const cat = state.pendingCategory;
+  const event = EVENTS[state.round];
+  if(event){ m = event.apply(state.sliders, m); }
+  renderScene(m, state.sliders);
+  renderBars(m);
+  renderAdvisors(m);
+  triggerDripBurst();
+
+  const prev = state.history.length ? state.history[state.history.length-1].metrics : null;
+  showResultsModal(m, cat, event, prev);
+
+  state.history.push({ round: state.round, sliders: {...state.sliders}, metrics: m, category: cat, predicted: state.cot.predict });
+  state.atl.thinking = Math.min(TOTAL_ROUNDS, state.atl.thinking+1);
+  state.atl.research = Math.min(TOTAL_ROUNDS, state.atl.research+1);
+  renderATL();
+  drawChart();
+}
+
+function arrowFor(delta){
+  if(Math.abs(delta)<0.5) return '<span class="arrow-flat">▬</span>';
+  return delta>0 ? '<span class="arrow-up">▲</span>' : '<span class="arrow-down">▼</span>';
+}
+
+function dominantConceptFor(s){
+  const devs = { acid: Math.abs(s.acid-2), alkali: Math.abs(s.alkali-2), indicator: s.indicator, temp: Math.abs(s.temp-2) };
+  const top = Object.keys(devs).reduce((a,b)=>devs[a]>=devs[b]?a:b);
+  const map = {
+    acid: 'concentration and reactivity of the acid',
+    alkali: 'stoichiometric control of reacting quantities',
+    indicator: 'the reliability of qualitative measurement tools',
+    temp: 'kinetic theory and equilibrium shift with temperature'
+  };
+  return map[top];
+}
+
+function showResultsModal(m, cat, event, prev){
+  const catInfo = PREDICTIONS.find(p=>p.id===cat);
+  const predicted = PREDICTIONS.find(p=>p.id===state.cot.predict);
+  const match = state.cot.predict === cat;
+
+  const gridRows = BARS.map(b=>{
+    const val = b.getPercent(m);
+    const prevVal = prev ? b.getPercent(prev) : val;
+    const delta = val - prevVal;
+    return `<div class="orow"><span>${b.label}</span><span>${arrowFor(delta)} ${b.getText(m)} ${prev? `(${delta>=0?'+':''}${Math.round(delta)})`:''}</span></div>`;
+  }).join('');
+
+  const sliderSummary = `acid ${state.sliders.acid}/4, alkali ${state.sliders.alkali}/4, indicator ${state.sliders.indicator}/4, temperature ${state.sliders.temp}/4`;
+  const chain = `Setting ${sliderSummary} → shifted the solution to pH ${m.ph.toFixed(1)} with ${Math.round(m.completeness)}% neutralisation → which the bench classifies as "${catInfo.label}."`;
+
+  const concept = dominantConceptFor(state.sliders);
+  const rtf = `<div class="rtf-chain">
+    <span>Your decision reflected: <b>${concept}</b></span>
+    <span><span class="arrow">→</span> This led to: <b>${catInfo.label}</b>, pH ${m.ph.toFixed(1)}</span>
+    <span><span class="arrow">→</span> This connects to: <b>Form</b> — the physical arrangement of reactants determines the properties of the product.</span>
+  </div>`;
+
+  const cotEval = `
+    <div><b>Step 1</b> (${RESOURCE_NAMES[state.cot.varKey] || state.cot.varKey}): your reasoning "${state.cot.varReason}" ${match?'held up — the value you chose was the main driver of this outcome.':'was a reasonable starting point, but the actual outcome depended more on the interaction between sliders than on this one variable alone.'}</div>
+    <div style="margin-top:6px;"><b>Step 2</b> (${RESOURCE_NAMES[state.cot.res1]}): predicted effect — ${match?'this tracked closely with the measured result.':'this is the step worth revisiting: the measured change did not fully match what you expected here.'}</div>
+    <div style="margin-top:6px;"><b>Step 3</b> (${RESOURCE_NAMES[state.cot.res2]}): knock-on effect — ${m.indicatorAcc<45?'this is likely where the gap was: indicator accuracy dropped further than most predictions account for.':'this played out close to expectations.'}</div>
+    <div style="margin-top:6px;"><b>Step 4</b> — Evaluating your chain: your overall prediction of "${predicted?predicted.label:'—'}" was <b>${match?'accurate':'inaccurate'}</b>${match?'.':` — the actual result was "${catInfo.label}."`}</div>
+  `;
+
+  const echo = REALWORLD[state.round-1];
+  const eventHtml = event ? `<div class="event-card"><b>⚡ Random Event — ${event.title}:</b> ${event.body}</div>` : '';
+
+  const isLast = state.round >= TOTAL_ROUNDS;
+
+  document.getElementById('resultsModalBody').innerHTML = `
+    <h2>Round ${state.round} Result — Future B occurred</h2>
+    <div class="sub">The actual outcome matched <b>Future B</b>, the realistic case. ${cat==='crisis' ? 'Future A (the clean, optimistic case) did not happen because the dosing and indicator settings pushed the solution far from equivalence.' : 'Future C (the crisis case) did not happen because the reaction stayed within a controllable range.'}</div>
+
+    ${eventHtml}
+
+    <div class="outcome-grid">${gridRows}</div>
+
+    <div class="box">
+      <h4>Cause → Effect Chain</h4>
+      ${chain}
+    </div>
+
+    <div class="box">
+      <h4>RTF Feedback</h4>
+      ${rtf}
+    </div>
+
+    <div class="box">
+      <h4>Chain of Thought — Evaluated</h4>
+      ${cotEval}
+    </div>
+
+    <div class="echo"><b>Real-world echo — ${echo.title}:</b> ${echo.text}</div>
+
+    <div class="box" style="margin-top:10px;">
+      <h4>Discussion prompt</h4>
+      What single change to a slider would have made Future A happen instead of Future B?
+    </div>
+
+    <button class="modalBtn" onclick="closeResultsAndContinue()">${isLast ? 'Finish — view IB Reflection' : 'Continue to Round '+(state.round+1)}</button>
+  `;
+  document.getElementById('resultsBackdrop').classList.add('show');
+}
+
+function closeResultsAndContinue(){
+  document.getElementById('resultsBackdrop').classList.remove('show');
+  if(state.round >= TOTAL_ROUNDS){
+    showReflection();
+    return;
+  }
+  state.round += 1;
+  resetCotFields();
+  renderTimeline();
+  renderPredictWidget();
+  livePreview();
+  toast(`Round ${state.round} unlocked — adjust the bench controls.`);
+}
+
+function resetCotFields(){
+  state.cot = { varKey:'', varReason:'', res1:'', res1Reason:'', res2:'', res2Reason:'', predict:'' };
+  document.getElementById('cotVar').value='';
+  document.getElementById('cotVarReason').value='';
+  document.getElementById('cotRes1').value='';
+  document.getElementById('cotRes1Reason').value='';
+  document.getElementById('cotRes2').value='';
+  document.getElementById('cotRes2Reason').value='';
+  document.getElementById('echoRoundNum').textContent = state.round;
+  document.getElementById('echoBox').innerHTML = `<b>${REALWORLD[state.round-1].title}:</b> ${REALWORLD[state.round-1].text}`;
+  validateAdvance();
+}
+
+/* ============================================================
+   TIMELINE / ATL / CHART
+   ============================================================ */
+function renderTimeline(){
+  const wrap = document.getElementById('timeline');
+  wrap.innerHTML='';
+  for(let i=1;i<=TOTAL_ROUNDS;i++){
+    const cls = i<state.round ? 'done' : i===state.round ? 'active' : '';
+    const div = document.createElement('div');
+    div.className = 'tstep '+cls;
+    div.innerHTML = `<span class="n">${i<state.round?'✓':i}</span>Round ${i}`;
+    wrap.appendChild(div);
+  }
+}
+function renderATL(){
+  document.getElementById('dotsThinking').innerHTML = Array.from({length:TOTAL_ROUNDS}).map((_,i)=>`<span class="${i<state.atl.thinking?'on':''}"></span>`).join('');
+  document.getElementById('dotsResearch').innerHTML = Array.from({length:TOTAL_ROUNDS}).map((_,i)=>`<span class="${i<state.atl.research?'on':''}"></span>`).join('');
+}
+function drawChart(){
+  const canvas = document.getElementById('chart');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const pad=30, w=canvas.width-pad*2, h=canvas.height-pad*2;
+  ctx.strokeStyle='#c6d3d9'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,pad); ctx.lineTo(pad,pad+h); ctx.lineTo(pad+w,pad+h); ctx.stroke();
+  ctx.fillStyle='#8298a3'; ctx.font='10px IBM Plex Mono';
+  [0,50,100].forEach(v=>{ const y=pad+h-(v/100)*h; ctx.fillText(v,4,y+3); ctx.strokeStyle='#eef2f3'; ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(pad+w,y); ctx.stroke(); });
+
+  const colors = {ph:'#7c3aed', completeness:'#16a34a', indicatorAcc:'#0e7c86', saltFormed:'#d97706', volEquiv:'#dc2626'};
+  if(state.history.length===0) return;
+  const n = TOTAL_ROUNDS;
+  BARS.forEach(b=>{
+    ctx.strokeStyle = colors[b.key]; ctx.lineWidth=2; ctx.beginPath();
+    state.history.forEach((rec,i)=>{
+      const x = pad + (i/(n-1||1))*w;
+      const y = pad+h-(b.getPercent(rec.metrics)/100)*h;
+      i===0? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+  });
+  let lx = pad+w-150, ly = pad+6;
+  BARS.forEach(b=>{
+    ctx.fillStyle=colors[b.key]; ctx.fillRect(lx,ly,8,8);
+    ctx.fillStyle='#4d616d'; ctx.font='8.5px IBM Plex Mono'; ctx.fillText(b.label.split(' ')[0], lx+12, ly+7);
+    ly+=13;
+  });
+}
+
+/* ============================================================
+   REFLECTION
+   ============================================================ */
+const REFLECTION_QS = [
+  'What does "Form" mean in this simulation context? Give a real-world example.',
+  'Which single decision had the most unexpected consequence — and why were you surprised?',
+  'How would someone from a different cultural or economic background approach these decisions differently?',
+  'What would you change if you ran the simulation again? Use specific evidence from your results.',
+  'How does this simulation connect to a current global issue you know about outside school?',
+  'Which IB Learner Profile attribute did your decision-making best reflect: Thinkers, Knowledgeable, or Inquirers? Justify your choice.'
+];
+function showReflection(){
+  document.getElementById('roundView').style.display='none';
+  document.querySelectorAll('.panel h3').forEach(()=>{});
+  document.getElementById('reflection').style.display='block';
+  document.getElementById('reflectionQs').innerHTML = REFLECTION_QS.map((q,i)=>`
+    <div class="rq"><label>${i+1}. ${q}</label><textarea placeholder="Type your reflection…"></textarea></div>
+  `).join('');
+  toast('All 5 rounds complete — reflect below.');
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function toast(msg){
+  const t = document.createElement('div');
+  t.className='toast'; t.textContent=msg;
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(()=>t.remove(),3000);
+}
+
+/* ============================================================
+   RESET
+   ============================================================ */
+function confirmReset(){
+  if(confirm('Reset the simulation? All rounds, sliders and reflections will return to their starting state.')){
+    state.round=1;
+    state.sliders={acid:2,alkali:0,indicator:0,temp:2};
+    state.history=[];
+    state.atl={thinking:0,research:0};
+    resetCotFields();
+    renderSliders();
+    renderTimeline();
+    renderPredictWidget();
+    renderATL();
+    livePreview();
+    drawChart();
+    document.getElementById('reflection').style.display='none';
+    document.getElementById('roundView').style.display='grid';
+    toast('Simulation reset.');
+  }
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function startSim(){
+  document.getElementById('splash').style.display='none';
+  document.getElementById('app').style.display='block';
+  buildSceneSkeleton();
+  renderSliders();
+  renderTimeline();
+  renderPredictWidget();
+  renderATL();
+  resetCotFields();
+  livePreview();
+  drawChart();
+  toast('Bench live — set your controls for Round 1.');
+}
+</script>
+</body>
+</html>
